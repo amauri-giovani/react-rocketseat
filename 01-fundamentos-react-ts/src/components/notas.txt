@@ -1,0 +1,368 @@
+O Vite traz algumas funcionalidades como reload server para quando alterarmos algo no código e suporte para CSS Modules
+
+Criar projeto com Vite
+npm create vite@latest
+
+Pode escolher qual framework e Javascript ou Typescript
+Dê um nome ao projeto
+Entre nessa pasta
+Instale as dependências
+--------------------------------------------------------------
+Exemplo:
+npm create vite@latest
+npx: instalou 1 em 1.091s
+✔ Project name: … teste
+✔ Select a framework: › React
+✔ Select a variant: › JavaScript
+
+Scaffolding project in /home/amauri/teste_post/teste...
+
+Done. Now run:
+
+  cd teste
+  npm install
+  npm run dev
+
+--------------------------------------------------------------
+
+Instalar as dependências
+npm i
+ou
+npm install
+
+Rodar o projeto
+npm run dev
+Aparecerá a página padrão com um contador
+
+Para rodar em outra porta
+No arquivo vite.config.js
+Inclua abaixo de plugins
+server: {
+    port: 3001
+}
+Ficando assim
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3001
+}
+})
+
+
+Limpando o projeto antes de começar
+Remova os arquivo css e svg da pasta src e src/assets, ficando apenas App.jsx e main.jsx
+Remova a importação do index.css de main.jsx
+Remova a importação do useState, App.css e logo.svg de App.jsx
+Remova todo o conteúdo do return e deixe assim
+return (
+    <h1>Hello World</h1>
+)
+No navegador aparecerá apenas Hello World
+
+No index.html tem o script type="module" que é muito importante
+porque o Vite utiliza dos ECMA script modules nativo dos browsers
+O arquivo principal da aplicação é o main.jsx e está nesse <script>
+Esse arquivo contém o getElementById('root') que é o elemento raiz da página html
+que por sua vez está na <div id="root"></div> em index.html
+O React cria o html, css e js da app dentro dessa div
+
+Arquivos jsx são arquivos que contém html dentro do Javascript
+
+
+Criando componentes
+===================
+
+Crie um arquivo Post.jsx dentro de src
+function Post() {
+    return <p>Post</p>
+}
+export default Post
+
+ou
+
+export function Post() {
+    return <p>Post</p>
+}
+Essa forma é melhor porque garante que o nome importado é o mesmo do componente
+
+
+Em App.jsx
+import { Post } from './Post'
+function App() {
+    return <Post />
+}
+export default App
+
+
+Precisa ter uma tag pai/principal no return
+Não podemos ter várias tags sem ter uma envolvendo todas elas
+
+Em App.jsx
+import { Post } from './Post'
+function App() {
+    return <Post />
+    return <Post />
+    return <Post />
+    return <Post />
+}
+export default App
+Isso dá erro
+
+import { Post } from './Post'
+function App() {
+    <div>
+        return <Post />
+        return <Post />
+        return <Post />
+        return <Post />
+    </div>
+}
+export default App
+Isso dá certo
+
+Podemos alterar o export do App também
+export function App() {
+  return (
+    <div>
+        return <Post />
+    </div>
+  )
+}
+e na importação do App em main.jsx colocar entre {}
+import { App } from './App.jsx'
+
+
+Props (Propriedades)
+====================
+
+Podemos passar algumas props para os componentes como em App.jsx
+export function App() {
+  return (
+    <div>
+        <Post
+            name="Amauri"
+            text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati, molestias sequi. Explicabo voluptate a sint iusto esse et dolores dicta facere. Impedit nulla vitae dignissimos voluptates officia accusantium voluptatem itaque?"
+        />
+    </div>
+  )
+}
+
+Digite lorem no vscode e retornará a frase acima
+
+e acessá-las como parâmetros da function Post em Post.jsx
+export function Post(props) {
+    return <p>Post</post>
+}
+o props é um objeto que contém
+props: {author: "", content: ""}
+
+e podemos usar essas props
+export function Post(props) {
+    return (
+        <div>
+            <strong>{props.author}</strong>
+            <p>{props.content}</p>
+        </div>
+    )
+}
+
+
+Podemos criar novos posts em App.jsx
+export function App() {
+  return (
+    <div>
+        <Post
+            name="Amauri"
+            text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati, molestias sequi. Explicabo voluptate a sint iusto esse et dolores dicta facere. Impedit nulla vitae dignissimos voluptates officia accusantium voluptatem itaque?"
+        />
+        <Post
+            name="Giovani"
+            text="Um post muito legal"
+        />
+    </div>
+  )
+}
+
+Lib para trabalhar com datas
+npm i date-fns
+
+
+
+Estilos
+=======
+
+Podemos utilizar a ferramenta css-modules (buscar Google) mas não vamos pois o Vite já traz suporte para o CSS Modules
+Então precisamos apenas criar um arquivo e importá-lo
+Exemplo:
+Se o arquivo do componente se chamar Post.jsx, crie um arquivo Post.module.css
+E importe no Post.jsx da seguinte forma:
+import style from './Post.module.css'
+
+Dentro do arquivo css coloque as CLASSES, use sempre classes (className)
+Exemplo:
+.header {
+    background: #121214;
+}
+
+Dentro do arquivo jsx, chame as classes dessa forma:
+<header className={style.header}></header>
+
+
+Uma boa prática é criar um arquivo css global em src que será utilizado por toda a aplicação
+global.css
+
+// isso faz com que nunca aumentam sua altura e largura e sempre espremam o elemento para dentro
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;     // procure por box model para entender melhor
+}
+
+Importe-o dentro de App.jsx
+import './global.css'
+
+Uma coisa bem legal é nomear as cores
+Essa ideia de nomenclatura foi retirada do Tailwind CSS, onde 100 é mais claro e 900 mais escuro
+https://tailwindcss.com/docs/customizing-colors#default-color-palette
+Coloque no topo do arquivo global.css
+Exemplo:
+:root {
+    --white: #FFF;
+
+    --gray-100: #e1e1e6;
+    --gray-300: #c4c4cc;
+    --gray-400: #8d8d99;
+    --gray-600: #323238;
+    --gray-700: #29292e;
+    --gray-800: #202024;
+    --gray-900: #121214;
+
+    --green-300: #00B37E;
+    --green-500: #00875F;
+}
+
+Daí para usar essa nomenclatura é só usar var() com a cor desejada
+body {
+    background: var(--gray-900);
+    color: var(--gray-300);
+    --webkit-font-smoothing: antialiased;
+}
+
+
+
+REM (Unidade relacional de medida)
+===
+
+1 rem = 16px
+1.5 rem = 24px
+E assim por diante
+Exemplo:
+font-size: 1rem;
+
+
+
+Fontes
+======
+
+
+Quando baixar fontes do Google, coloque sempre os links antes de tudo, abaixo de <meta charset>
+Exemplo:
+
+<head>
+  <meta charset="UTF-8" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
+
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+
+
+
+Imagens
+=======
+
+Um site legal para baixar imagens é o https://unsplash.com/pt-br
+
+A importação de imagens é feita no arquivo jsx
+Exemplo:
+import igniteLogo from '../assets/ignite-logo.svg'
+
+E para mostrá-la:
+<img src={igniteLogo} alt="Logotipo do Ignite" />
+
+
+
+Ícones
+======
+
+Usaremos uma lib mas podemos ver todos seus ícones em https://phosphoricons.com/
+Para instalar:
+npm i phosphor-react
+
+Dentro do arquivo que for utilizar o ícone, importe:
+import { PencilLine } from 'phosphor-react'
+
+Daí é só chamar o componente que foi importado
+<PencilLine />
+
+
+
+Closures (atualizar o valor de uma variável que depende dela mesmo com o valor anterior em uma função)
+======================================================================================================
+
+// function handleLikeComment() {
+//     setLikeCount(likeCount + 1)
+// }
+
+// E se quiséssemos atualizar de 2 em 2 simplesmente repetindo o código?
+// function handleLikeComment() {
+//     setLikeCount(likeCount + 1)
+//     setLikeCount(likeCount + 1)
+// }
+// Não incrementaria de 2 em 2 porque quando o React executa a função acima, 
+// ele cria um novo contexto (com valor 0) para armazenar o valor em likeCount
+// e a segunda linha executará o mesmo código com mesmo valor anterior zero (0)
+
+// Temos duas soluções para solucionar isso
+// A primeira é criando uma variável armazenando o valor mais atual
+// Daí quando atualizarmos com + 1, o valor será incrementado
+// function handleLikeComment() {
+//     const newLikeCount = likeCount + 1
+//     setLikeCount(newLikeCount)
+//     setLikeCount(newLikeCount + 1)
+// }
+
+// A segunda e melhor opção é pegar o estado mais atual da variável com 
+// arrow function "() => {}" e atualizar o estado
+// É como se utilizasse uma fila de atualizações
+function handleLikeComment() {
+    setLikeCount((stateLikeCount) => {
+        return stateLikeCount + 1
+    })
+}
+
+
+Typescript
+==========
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

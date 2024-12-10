@@ -1,0 +1,22 @@
+.avatar {
+    /* width: 3rem; */
+    /* height: 3rem; */
+    /* 12px é a soma das duas border 4 + 2 outline 2px */
+    width: 3rem;
+    height: 3rem;
+    border-radius: 8px;
+}
+
+.avatarWithBorder {
+    /* pode ser feito de duas formas para que a imagem não fique espremida pelas bordas
+    box-sizing: initial;
+    ou a forma abaixo*/
+    /* width: 3rem; */
+    /* height: 3rem; */
+    /* 12px é a soma das duas border 4 + 2 outline 2px */
+    width: calc(3rem + 12px);
+    height: calc(3rem + 12px);
+    border-radius: 8px;
+    border: 4px solid var(--gray-800);
+    outline: 2px solid var(--green-500);
+}
